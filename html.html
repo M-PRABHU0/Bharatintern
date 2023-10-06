@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Site</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Social Media Site</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">My Profile</a>
+      <a href="#">My Tasks</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="feed">
+      <h2>News Feed</h2>
+      </section>
+
+    <section id="tasks">
+      <h2>My Tasks</h2>
+      </section>
+
+    <section id="assign-task">
+      <h2>Assign Task</h2>
+      <form action="/assign-task" method="post">
+        <input type="text" name="task-name" placeholder="Task Name">
+        <input type="text" name="assigned-to" placeholder="Assigned To">
+        <input type="submit" value="Assign Task">
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>Copyright &copy; 2023 Social Media Site</p>
+  </footer>
+
+  <script>
+    // Load the user's news feed
+    const feed = document.getElementById('feed');
+
+    // Get the user's tasks
+    const tasks = document.getElementById('tasks');
+
+    // Load the user's tasks
+    fetch('/my-tasks')
+      .then(response => response.json())
+      .then(tasks => {
+        // Display the user's tasks
+        tasks.forEach(task => {
+          const taskElement = document.createElement('div');
+          taskElement.classList.add('task');
+
+          const taskNameElement = document.createElement('h3');
+          taskNameElement.textContent = task.name;
+
+          const taskAssignedToElement = document.createElement('p');
+          taskAssignedToElement.textContent = task.assignedTo;
+
+          taskElement.appendChild(taskNameElement);
+          taskElement.appendChild(taskAssignedToElement);
+
+          tasks.appendChild(taskElement);
+        });
+      });
+
+    // Assign a task to another user
+    const assignTaskForm = document.getElementById('assign-task');
+    assignTaskForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const taskName = document.querySelector('input[name="task-name"]').value;
+      const assignedTo = document.querySelector('input[name="assigned-to"]').value;
+
+      // Make a POST request to assign the task
+      fetch('/assign-task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          taskName,
+          assignedTo
+        })
+      })
+        .then(response => response.json())
+        .then(task => {
+          // Display the assigned task
+          const taskElement = document.createElement('div');
+          taskElement.classList.add('task');
+
+          const taskNameElement = document.createElement('h3');
+          taskNameElement.textContent = task.name;
+
+          const taskAssignedToElement = document.createElement('p');
+          taskAssignedToElement.textContent = task.assignedTo;
+
+          taskElement.appendChild(taskNameElement);
+          taskElement.appendChild(taskAssignedToElement);
+
+          tasks.appendChild(taskElement);
+        });
+    });
+  </script>
+</body>
+</html>
